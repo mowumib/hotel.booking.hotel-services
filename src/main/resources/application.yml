@@ -1,0 +1,20 @@
+spring:
+    application:
+        name: hotel-services
+    config:
+        import: optional:configserver:http://localhost:8098/
+    
+#     security:
+#         oauth2:
+#             resourceserver:
+#                 jwt:
+#                     issuer-uri: http://localhost:8091/user-services
+# components:
+#   securitySchemes:
+#     BearerAuth:
+#       type: http
+#       scheme: bearer
+#       bearerFormat: JWT
+
+# security:
+#   - BearerAuth: []
