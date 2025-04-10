@@ -1,5 +1,7 @@
 package com.hotel.booking.hotel_services.entity;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotel.booking.hotel_services.enums.Status;
 import com.hotel.booking.hotel_services.utils.BaseEntityAudit;
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Table(name = "room")
 public class Room extends BaseEntityAudit{
 
-    @Column(name = "room_code", unique = true, nullable = false)
+    @Column(name = "room_code", unique = true,nullable = false)
     private String roomCode;
 
     @Column(name = "room_type", nullable = false)   
@@ -41,5 +43,8 @@ public class Room extends BaseEntityAudit{
     @ManyToOne
     @JsonIgnore
     private Hotel hotel;
+
+    @OneToMany(mappedBy = "room")
+    private List<Booking> bookings;
 
 }

@@ -8,6 +8,7 @@ import com.hotel.booking.hotel_services.utils.BaseEntityAudit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -29,11 +30,12 @@ public class Booking extends BaseEntityAudit {
     @Column(name = "booking_code", unique = true, nullable = false)
     private String bookingCode;
 
-    @Column(name = "user_code", unique = true, nullable = false)
-    private String userCode;
+    // @Column(name = "user_code", nullable = false)
+    // private String userCode;
 
-    @Column(name = "room_code", unique = true, nullable = false)
-    private String roomCode;
+    @ManyToOne
+    @JoinColumn(name = "room_code", referencedColumnName = "room_code")
+    private Room room;
 
     @Column(name = "booking_date")
     private LocalDate bookingDate;

@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/hotels/booking/")
+@RequestMapping("/hotels/booking")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "BOOKING CONTROLLER REST APIS IN HOTEL SERVICE", description = "REST API FOR BOOKING HOTEL IN HOTEL SERVICE")
@@ -32,7 +32,7 @@ public class BookingController {
             summary = "Book a room by hotel and user code",
             description = "REST API for booking a room"
     )
-    @PostMapping("/addBooking")
+    @PostMapping("/add-booking")
     public ResponseEntity<ResponseModel> addBooking(@RequestParam String hotelCode, @RequestParam String userCode, @Valid @RequestBody BookingDto dto) {
         ResponseModel responseModel = bookingService.bookRoom(hotelCode, userCode, dto);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);

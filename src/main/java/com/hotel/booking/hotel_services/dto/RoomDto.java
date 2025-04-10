@@ -11,7 +11,6 @@ public class RoomDto {
     @NotEmpty(message = "Room number cannot be empty")
     private String roomNumber;
 
-    @NotEmpty(message = "Room price cannot be empty")
     private Integer roomPrice;
 
     @NotEmpty(message = "Room description cannot be empty")

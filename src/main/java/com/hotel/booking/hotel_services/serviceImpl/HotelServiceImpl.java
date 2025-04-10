@@ -65,7 +65,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public ResponseModel deleteHotelByHotelCode(String hotelCode) {
-        Hotel hotel = hotelRepository.findById(hotelCode).orElseThrow( 
+        Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( 
             () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
         hotelRepository.delete(hotel);
@@ -76,15 +76,22 @@ public class HotelServiceImpl implements HotelService {
     public ResponseModel addRoom(String hotelCode, RoomDto dto) {
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
+        boolean roomExists = hotel.getRooms().stream()
+            .anyMatch(room -> room.getRoomNumber().equalsIgnoreCase(dto.getRoomNumber()));
+
+        if (roomExists) {
+            throw new HotelRequestException(String.format(Message.ALREADY_EXISTS, "Room"), HttpStatus.CONFLICT);
+        }
+
         ModelMapper modelMapper = new ModelMapper();
         log.info("Hotel: " + hotel);
         Room room = modelMapper.map(dto, Room.class);
 
         room.setRoomCode("ROOM-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8));
-        hotel.getRooms().add(room);
+        // hotel.getRooms().add(room);
         room.setHotel(hotel);
         room.setStatus(Status.AVAILABLE);
-        hotelRepository.save(hotel);
+        // hotelRepository.save(hotel);
         roomRepository.save(room);
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_CREATE, "Room"), room);
     }

@@ -38,7 +38,7 @@ public class BookingImpl implements BookingService {
 
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
-        Room room = roomRepository.findByRoomCode(dto.getRoomCode()).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
+        Room room = roomRepository.findByRoomCode(dto.getRoom().getRoomCode()).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
 
         if(room.getStatus().equals(Status.BOOKED)) {
             return  new ResponseModel(HttpStatus.BAD_REQUEST.value(), String.format(Message.ALREADY_BOOKED, "Room"));
@@ -46,13 +46,13 @@ public class BookingImpl implements BookingService {
 
         Booking booking = new Booking();
         booking.setHotel(hotel);
-        booking.setRoomCode(dto.getRoomCode());
+        booking.setRoom(dto.getRoom());
         booking.setBookingCode("BOOK-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8));
         booking.setAmount(dto.getAmount());
         booking.setPaymentStatus(dto.getPaymentStatus());
         booking.setBookingDate(dto.getBookingDate());
         booking.setCheckOutDate(dto.getCheckOutDate());
-        booking.setUserCode(userCode);
+        booking.getUser().setUserCode(userCode);
 
         room.setStatus(Status.BOOKED);
         bookingRepository.save(booking);
@@ -77,7 +77,7 @@ public class BookingImpl implements BookingService {
     public ResponseModel cancelBooking(String bookingCode) {
         Booking booking = bookingRepository.findByBookingCode(bookingCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
 
-        Room room = roomRepository.findByRoomCode(booking.getRoomCode()).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
+        Room room = roomRepository.findByRoomCode(booking.getRoom().getRoomCode()).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
 
         if (room.getStatus().equals(Status.AVAILABLE)) {
             return new ResponseModel(HttpStatus.OK.value(), String.format(Message.ALREADY_AVAILABLE, "Room"));
@@ -91,7 +91,7 @@ public class BookingImpl implements BookingService {
     public ResponseModel completeBooking(String bookingCode) {
         Booking booking = bookingRepository.findById(bookingCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
 
-        Room room = roomRepository.findById(booking.getRoomCode()).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
+        Room room = roomRepository.findById(booking.getRoom().getRoomCode()).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
 
         room.setStatus(Status.AVAILABLE);
         roomRepository.save(room);
