@@ -1,10 +1,10 @@
 package com.hotel.booking.user_services.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotel.booking.user_services.enums.Status;
 import com.hotel.booking.user_services.utils.BaseEntityAudit;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

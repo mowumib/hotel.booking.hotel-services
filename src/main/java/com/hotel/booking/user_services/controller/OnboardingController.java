@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/hotel")
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "ONBOARDING REST APIS FOR HOTEL MANAGEMENT", description = "REST APIS FOR ONBOARDING USERS")
+@Tag(name = "ONBOARDING REST APIS FOR HOTEL MANAGEMENT IN USER SERVICE", description = "REST APIS FOR ONBOARDING USERS")
 public class OnboardingController {
 
     private final UserService service;
@@ -34,7 +34,7 @@ public class OnboardingController {
             description = "REST API for client users to signup"
     )
     @PostMapping("/user/signup")
-    public ResponseEntity<ResponseModel> createClientUser(@RequestBody CreateUserDto dto) {
+    public ResponseEntity<ResponseModel> createClientUser(@Valid @RequestBody CreateUserDto dto) {
         ResponseModel responseModel = service.createClientUser(dto);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
@@ -45,7 +45,7 @@ public class OnboardingController {
             description = "REST API for admin users to signup"
     )
     @PostMapping("/admin-user/signup")
-    public ResponseEntity<ResponseModel> createAdminUser(@RequestBody CreateUserDto dto) {
+    public ResponseEntity<ResponseModel> createAdminUser(@Valid @RequestBody CreateUserDto dto) {
         ResponseModel responseModel = service.createAdminUser(dto);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }

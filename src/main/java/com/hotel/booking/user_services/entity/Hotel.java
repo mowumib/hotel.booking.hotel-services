@@ -12,7 +12,7 @@ import com.hotel.booking.user_services.utils.BaseEntityAudit;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity@EqualsAndHashCode(callSuper = true)
 @Table(name = "hotels")
 public class Hotel extends BaseEntityAudit{
 

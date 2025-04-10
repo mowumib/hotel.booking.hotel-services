@@ -4,10 +4,13 @@ package com.hotel.booking.user_services.serviceImpl;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.hotel.booking.user_services.dto.GenericResponseModel;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.entity.Booking;
 import com.hotel.booking.user_services.entity.Hotel;
@@ -38,6 +41,8 @@ public class BookingServiceImpl implements BookingService {
     private final HotelService hotelService;
 
     private final BookingRepository bookingRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
 
     @Override
@@ -134,7 +139,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseModel getHotelByLocation(String location) {
-        List<Hotel> hotels = restTemplate.getForObject("http://hotel-services/hotels/get-hotel-by-location/"+location,List.class);
+        GenericResponseModel<List<Hotel>>  hotels = hotelService.getHotelByLocation(location);
+        // List<Hotel> hotels = restTemplate.getForObject("http://hotel-services/hotels/get-hotel-by-location/"+location,List.class);
         if (hotels == null) {
             throw new HotelRequestException(String.format(Message.NOT_FOUND, "Hotels"), HttpStatus.NOT_FOUND);
         }
@@ -143,22 +149,25 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseModel getHotelByName(String name) {
-        Hotel hotels = restTemplate.getForObject("http://hotel-services/hotels/get-hotel-by-name/"+name,Hotel.class);
+        GenericResponseModel<Hotel>  response = hotelService.getHotelByName(name);
+        // restTemplate.getForObject("http://hotel-services/hotels/get-hotel-by-name/" + name, HotelResponseModel.class);
 
-        log.info("Hotels: {}",hotels);
+        // logger.info("Hotels: {}", response);
+        Hotel hotel = response.getData();
 
-        if (hotels == null) {
-           throw new HotelRequestException(String.format(Message.NOT_FOUND, "Hotels"), HttpStatus.NOT_FOUND);
+        if (hotel == null) {
+           throw new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND);
         }
-        return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Hotels"), hotels);
+        return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Hotel"), hotel);
     }
 
     @Override
     public ResponseModel getAllHotels() {
-        List<Hotel> hotels = restTemplate.getForObject("http://hotel-services/hotels/get-all-hotels",List.class); 
+        GenericResponseModel<List<Hotel>> hotels = hotelService.getAllHotels();
+        // restTemplate.getForObject("http://hotel-services/hotels/get-all-hotels",List.class); 
 
 
-        log.info("Hotels: {}",hotels);
+        logger.info("Hotels: {}",hotels);
 
         if (hotels == null) {
             throw new HotelRequestException(String.format(Message.NOT_FOUND, "Hotels"), HttpStatus.NOT_FOUND);

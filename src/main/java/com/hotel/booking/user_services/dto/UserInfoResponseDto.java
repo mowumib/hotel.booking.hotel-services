@@ -1,7 +1,5 @@
 package com.hotel.booking.user_services.dto;
 
-import java.util.List;
-
 import com.hotel.booking.user_services.entity.User;
 
 import lombok.AllArgsConstructor;
