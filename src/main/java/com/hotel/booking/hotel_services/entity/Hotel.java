@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.hotel.booking.hotel_services.utils.BaseEntityAudit;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

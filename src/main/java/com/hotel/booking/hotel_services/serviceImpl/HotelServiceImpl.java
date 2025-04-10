@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,8 @@ public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
 
     private final RoomRepository roomRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(HotelServiceImpl.class);
 
     @Override
     public ResponseModel addHotel(HotelDto dto) {
@@ -151,6 +155,7 @@ public class HotelServiceImpl implements HotelService {
     public ResponseModel getHotelByName(String name) {
         Hotel hotel = hotelRepository.findByName(name).orElseThrow(() ->
         new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+        logger.info("Fetched hotel: {}", hotel);
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Hotel"), hotel);
     }
 }
