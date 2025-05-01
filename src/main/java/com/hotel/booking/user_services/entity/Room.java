@@ -1,10 +1,16 @@
 package com.hotel.booking.user_services.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotel.booking.user_services.enums.Status;
-import com.hotel.booking.user_services.utils.BaseEntityAudit;
+import com.hotel.booking.user_services.utils.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +21,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Room extends BaseEntityAudit{
+@Table(name = "room")
+public class Room extends BaseEntity{
 
     @Column(name = "room_code", unique = true, nullable = false)
     private String roomCode;
@@ -35,6 +42,14 @@ public class Room extends BaseEntityAudit{
     @Column(name = "room_description", nullable = false)
     private String roomDescription;
     
-    private Hotel hotel;
+    @Column(name = "hotel_code")
+    private String hotelCode;
+
+    // @ManyToOne
+    // @JsonIgnore
+    // private Hotel hotel;
+
+    @OneToMany(mappedBy = "room")
+    private List<Booking> bookings;
 
 }

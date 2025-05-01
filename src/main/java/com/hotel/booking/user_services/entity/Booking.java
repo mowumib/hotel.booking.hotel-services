@@ -5,10 +5,11 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotel.booking.user_services.enums.BookingStatus;
 import com.hotel.booking.user_services.enums.PaymentStatus;
-import com.hotel.booking.user_services.utils.BaseEntityAudit;
+import com.hotel.booking.user_services.utils.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,16 +21,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Booking extends BaseEntityAudit {
+public class Booking extends BaseEntity {
 
     @Column(name = "booking_code", unique = true, nullable = false)
     private String bookingCode;
 
-    @Column(name = "hotel_code", unique = true, nullable = false)
+    @Column(name = "hotel_code", nullable = false)
     private String hotelCode;
 
-    @Column(name = "room_code", unique = true, nullable = false)
-    private String roomCode;
+    // @Column(name = "room_code", nullable = false)
+    // private String roomCode;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "room_code", referencedColumnName = "room_code")
+    private Room room;
 
     @Column(name = "booking_date")
     private LocalDate bookingDate;
@@ -45,9 +51,18 @@ public class Booking extends BaseEntityAudit {
 
     @Column(name = "booking_status")
     private BookingStatus bookingStatus;
-    
+
     @ManyToOne
     @JsonIgnore
+    @JoinColumn(name = "hotel_code", referencedColumnName = "hotel_code", insertable = false, updatable = false)
+    private Hotel hotel;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "user_code", referencedColumnName = "user_code", insertable = false, updatable = false)
     private User user;
+    
+    @Column(name = "user_code", nullable = false)
+    private String userCode;
 
 }

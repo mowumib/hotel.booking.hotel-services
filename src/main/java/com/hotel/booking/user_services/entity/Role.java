@@ -22,9 +22,6 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // @Column(name = "roleName")
-    // private String roleName;
     
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
@@ -37,11 +34,9 @@ public class Role {
     public Role(RoleEnum name){
         this.roleName = name;
     }
-    /* @Column(name = "description")
-    private String description; */
 
-    /* @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonBackReference
-    private List<User> users; */
-
+    public Role setRoleName(RoleEnum roleName) {
+        this.roleName = roleName;
+        return this;
+    }
 }

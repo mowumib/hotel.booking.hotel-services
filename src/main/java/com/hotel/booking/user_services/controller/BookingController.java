@@ -2,15 +2,17 @@ package com.hotel.booking.user_services.controller;
 
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hotel.booking.user_services.dto.BookingDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.service.BookingService;
 
@@ -29,94 +31,71 @@ public class BookingController {
 
     private final BookingService bookingService;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(
         summary = "Add booking",
         description = "REST API for adding booking"
     )
-    @PostMapping("/addBooking")
-    public ResponseEntity<ResponseModel> bookRoom(@RequestParam String hotelCode, @RequestParam String userCode){
-        ResponseModel responseModel = bookingService.bookRoom(userCode, hotelCode);
+    @PostMapping("/add-booking")
+    public ResponseEntity<ResponseModel> addBooking(@RequestParam String hotelCode, @RequestParam String userCode, @RequestBody BookingDto dto) {
+        ResponseModel responseModel = bookingService.bookRoom(hotelCode, userCode, dto);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
 
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(
         summary = "Get booking by booking code",
         description = "REST API for getting booking by code"
     )
-    @GetMapping("/getBooking")
+    @GetMapping("/get-booking")
     public ResponseEntity<ResponseModel> getBookingByCode(@RequestParam String bookingCode){
         ResponseModel responseModel = bookingService.getBookingByCode(bookingCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Get all booking",
+            description = "REST API for getting all booking"
+    )
+    @GetMapping("/get-all-booking")
+    public ResponseEntity<ResponseModel> getAllBooking() {
+        ResponseModel responseModel = bookingService.getAllBooking();
+        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
+    }
 
-    // @PostMapping("/completeBooking/{bookingCode}")
-    // public ResponseEntity<Booking> completeBookingHandler(@RequestParam String bookingCode){
-    //     return ResponseEntity.ok(bookingService.completeBooking(bookingCode));
-    // }
-
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(
         summary = "Cancel Booking",
         description = "REST API for canceling booking"
     )
-    @DeleteMapping("/cancelBooking")
+    @DeleteMapping("/cancel-booking")
     public ResponseEntity<ResponseModel> cancelBooking(@RequestParam String bookingCode){
         ResponseModel responseModel = bookingService.cancelBooking(bookingCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(
-        summary = "Get all bookings",
+        summary = "Get all bookings by user code",
         description = "REST API for getting all bookings"
     )
-    @GetMapping("/getAllBookings")
-    public ResponseEntity<ResponseModel> getAllBookings(@RequestParam String userCode){
-        ResponseModel responseModel = bookingService.getAllBookings(userCode);
+    @GetMapping("/get-all-bookings-by-user-code")
+    public ResponseEntity<ResponseModel> getAllBookingsByUserCode(@RequestParam String userCode){
+        ResponseModel responseModel = bookingService.getAllBookingsByUserCode(userCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
     @Operation(
         summary = "Get all bookings by hotel code",
         description = "REST API for getting all bookings by hotel code"
     )
-    @GetMapping("/getAllBookingsByHotelCode")
+    @GetMapping("/get-all-bookings-by-hotel-code")
     public ResponseEntity<ResponseModel> getAllBookingsByHotelCode(@RequestParam String hotelCode){
         ResponseModel responseModel = bookingService.getAllBookingsByHotelCode(hotelCode);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @Operation(
-        summary = "Get hotel by location",
-        description = "REST API for getting all hotels by location"
-    )
-    @GetMapping("/getHotelByLocation")
-    public ResponseEntity<ResponseModel> getHotelByLocation(@RequestParam String location){
-        ResponseModel responseModel = bookingService.getHotelByLocation(location);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    
-    @Operation(
-        summary = "Get hotel by name",
-        description = "REST API for getting hotel by name"
-    )
-    @GetMapping("/getHotelByName/{name}")
-    public ResponseEntity<ResponseModel> getHotelByName(@PathVariable String name){
-        ResponseModel responseModel = bookingService.getHotelByName(name);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-
-    @Operation(
-        summary = "Get all hotels",
-        description = "REST API for getting all hotels"
-    )
-    @GetMapping("/getAllHotels")
-    public ResponseEntity<ResponseModel> getAllHotels(){
-        ResponseModel responseModel = bookingService.getAllHotels();
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
 }

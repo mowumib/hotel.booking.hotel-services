@@ -38,7 +38,9 @@ public final class Message {
 
     public static final String NOT_CANCELLED = "%s not cancelled";
     public static final String SUCCESS_CANCELLED = "%s cancelled successfully";
-
+    public static final String ALREADY_AVAILABLE = "%s already available";
+    public static final String SUCCESS_BOOKED = "%s booked successfully";
+    
     private Message() {
         throw new AssertionError("Cannot instantiate Message");
     }

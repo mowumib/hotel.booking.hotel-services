@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,7 +42,7 @@ public class User {
     private String role; // ADMIN or USER */
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonManagedReference
+    // @JsonManagedReference
     @JoinTable(name = "user_role_assignments", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId"))
     private Set<Role> roles = new HashSet<>();
 

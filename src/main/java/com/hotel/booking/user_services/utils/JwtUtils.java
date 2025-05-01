@@ -34,17 +34,6 @@ public class JwtUtils {
     @Autowired
     private UserRepository userRepository;
 
-
-    /* public String generateJwtToken(Authentication authentication) {
-    CustomUserDetailImpl userPrincipal = (CustomUserDetailImpl) authentication.getPrincipal();
-        return Jwts.builder()
-            .setSubject((userPrincipal.getUsername()))
-            .setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-            .signWith(key(), SignatureAlgorithm.HS256)
-            .compact();
-    } */
-
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
