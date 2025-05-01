@@ -13,9 +13,10 @@ import com.hotel.booking.user_services.entity.User;
 
 public class CustomUserDetailImpl implements UserDetails{
 
-    private Collection<? extends GrantedAuthority> authorities; /* NEW */
+    private Collection<? extends GrantedAuthority> authorities;
 
     private String id;
+
     private String email;
 
     @JsonIgnore
@@ -43,21 +44,22 @@ public class CustomUserDetailImpl implements UserDetails{
         this.id = id;
         this.email = email;
         this.password = password;
-        this.authorities = authorities; /* NEW WASN'T THERE BEFORE*/
+        this.authorities = authorities;
     }
     public static CustomUserDetailImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleName().name()))
-                .collect(Collectors.toList()); /* NEW */
+                // .map(role -> new SimpleGrantedAuthority(role.getRoleName().name()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name()))
+                .collect(Collectors.toList());
         return new CustomUserDetailImpl(
             user.getId(),
             user.getEmail(),
             user.getPassword(),
-            authorities); /* NEW */
+            authorities);
       }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;/* NEW, PREVIOUS WAS NULL*/
+        return authorities;
     }
 }

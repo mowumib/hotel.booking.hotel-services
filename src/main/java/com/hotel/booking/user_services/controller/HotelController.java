@@ -3,6 +3,7 @@ package com.hotel.booking.user_services.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,16 +26,18 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/hotels")
 @RequiredArgsConstructor
 @Validated
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "HOTEL CONTROLLER REST APIS IN HOTEL SERVICE", description = "REST APIS IN HOTEL SERVICE")
 public class HotelController {
 
     private final HotelService hotelService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    
     @Operation(
         summary = "Add hotel",
-        description = "REST API for adding a hotel"
+        description = "Hotel APIs"
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add-hotel")
     public ResponseEntity<ResponseModel> addHotel(@Valid @RequestBody HotelDto dto) {
         ResponseModel responseModel = hotelService.addHotel(dto);

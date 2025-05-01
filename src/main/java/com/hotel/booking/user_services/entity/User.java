@@ -38,12 +38,9 @@ public class User {
     @Column(name= "password", nullable = false)
     private String password;
 
-    /* @Column(name= "role", nullable = false)
-    private String role; // ADMIN or USER */
 
     @ManyToMany(fetch = FetchType.LAZY)
-    // @JsonManagedReference
-    @JoinTable(name = "user_role_assignments", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId"))
+    @JoinTable(name = "user_role_assignments", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     /* Use @PrePersist to set the id before saving the entity could not use @GeneratedValue(generator = "UUID")*/

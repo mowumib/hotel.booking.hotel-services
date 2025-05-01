@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
-    // private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;

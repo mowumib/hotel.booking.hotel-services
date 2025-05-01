@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
     User user = userRepository.findByUserCode(userCode).orElseThrow(
         () -> new HotelRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));;
     
-        List<Booking> bookings = bookingRepository.findByUserCode(userCode);
+        List<Booking> bookings = bookingRepository.findByUserCode(user.getUserCode());
     
         return new ResponseModel(HttpStatus.OK.value(), 
             String.format(Message.SUCCESS_GET, "Bookings"), bookings);
