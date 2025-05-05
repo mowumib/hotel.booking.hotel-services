@@ -16,7 +16,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = "com.hotel.booking.user_services.feignClient")
+// @EnableFeignClients(basePackages = "com.hotel.booking.user_services.feignClient")
 public class UserServices {
 
 	public static void main(String[] args) {
