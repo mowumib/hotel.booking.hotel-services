@@ -3,6 +3,7 @@ package com.hotel.booking.user_services;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @SpringBootApplication
+@EnableRabbit
 // @EnableFeignClients(basePackages = "com.hotel.booking.user_services.feignClient")
 public class UserServices {
 

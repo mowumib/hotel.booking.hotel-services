@@ -17,7 +17,7 @@ import com.hotel.booking.user_services.dto.RoomDto;
 import com.hotel.booking.user_services.entity.Hotel;
 import com.hotel.booking.user_services.entity.Room;
 import com.hotel.booking.user_services.enums.Status;
-import com.hotel.booking.user_services.exception.HotelRequestException;
+import com.hotel.booking.user_services.exception.GlobalRequestException;
 import com.hotel.booking.user_services.exception.Message;
 import com.hotel.booking.user_services.repository.HotelRepository;
 import com.hotel.booking.user_services.repository.RoomRepository;
@@ -41,7 +41,7 @@ public class HotelServiceImpl implements HotelService {
     public ResponseModel addHotel(HotelDto dto) {
         boolean hotelExists = hotelRepository.existsByNameIgnoreCase(dto.getName());
         if (hotelExists) {
-            throw new HotelRequestException(
+            throw new GlobalRequestException(
                 String.format(Message.ALREADY_EXISTS, "Hotel"),
                 HttpStatus.CONFLICT
             );
@@ -60,7 +60,7 @@ public class HotelServiceImpl implements HotelService {
     
     @Override
     public ResponseModel getHotelByHotelCode(String hotelCode) {
-        Hotel hotel =hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+        Hotel hotel =hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Hotel"), hotel);
     }
 
@@ -74,7 +74,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel deleteHotelByHotelCode(String hotelCode) {
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( 
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
         hotelRepository.delete(hotel);
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_DELETE, "Hotel"), null);
@@ -83,13 +83,13 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public ResponseModel addRoom(String hotelCode, RoomDto dto) {
-        Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+        Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
         boolean roomExists = hotel.getRooms().stream()
             .anyMatch(room -> room.getRoomNumber().equalsIgnoreCase(dto.getRoomNumber()));
 
         if (roomExists) {
-            throw new HotelRequestException(String.format(Message.ALREADY_EXISTS, "Room"), HttpStatus.CONFLICT);
+            throw new GlobalRequestException(String.format(Message.ALREADY_EXISTS, "Room"), HttpStatus.CONFLICT);
         }
 
         ModelMapper modelMapper = new ModelMapper();
@@ -109,7 +109,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel getRoomByRoomCode(String roomCode) {
         Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
 
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Room"), room);
     }
@@ -117,7 +117,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel getAllAvailableRoom(String hotelCode) {
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow(
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
         List<Room> rooms = hotel.getRooms();
         List<Room> availableRooms = new ArrayList<>();
         for(Room room: rooms) {
@@ -134,7 +134,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel getAllBookedRoom(String hotelCode) {
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow(
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
         
 
         List<Room> rooms = hotel.getRooms();
@@ -156,7 +156,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel getAllRooms(String hotelCode) {
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow(
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
         List<Room> rooms = hotel.getRooms();
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Rooms"), rooms);
@@ -166,7 +166,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel deleteRoomByRoomCode(String roomCode) {
         Room room = roomRepository.findByRoomCode(roomCode).orElseThrow(
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
         roomRepository.delete(room);
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_DELETE, "Room"), null);
     }
@@ -176,7 +176,7 @@ public class HotelServiceImpl implements HotelService {
     public ResponseModel getHotelByLocation(String location) {
         List<Hotel> hotels = hotelRepository.findByLocation(location);
         if (hotels.isEmpty()) {
-            throw new HotelRequestException(String.format(Message.NOT_FOUND, "Hotels"), HttpStatus.NOT_FOUND);
+            throw new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotels"), HttpStatus.NOT_FOUND);
         }
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Hotels"), hotels);
     }
@@ -185,7 +185,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public ResponseModel getHotelByName(String name) {
         Hotel hotel = hotelRepository.findByName(name).orElseThrow(() ->
-        new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+        new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
         logger.info("Fetched hotel: {}", hotel);
         return new ResponseModel(HttpStatus.OK.value(), String.format(Message.SUCCESS_GET, "Hotel"), hotel);
     }

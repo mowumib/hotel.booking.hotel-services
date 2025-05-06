@@ -39,7 +39,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/hotel/user/signup/**", "/hotel/admin-user/signup/**", "/hotel/user/signin/**", "/error").permitAll()
+                        .requestMatchers("/hotel/user/signup/**", "/hotel/admin-user/signup/**", "/hotel/user/signin/**", "/error", "hotel/user/verify-otp-code").permitAll()
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(authenticationProvider());

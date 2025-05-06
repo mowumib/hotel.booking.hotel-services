@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hotel.booking.user_services.dto.BaseResponseDto;
 import com.hotel.booking.user_services.dto.CreateUserDto;
+import com.hotel.booking.user_services.dto.OtpTokenValidatorDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.dto.SignInDto;
 import com.hotel.booking.user_services.service.UserService;
@@ -60,4 +61,14 @@ public class OnboardingController {
         return ResponseEntity.status(responseModel.getStatus()).body(responseModel);
     }
 
+
+    @Operation(
+            summary = "Verify OTP Code REST API",
+            description = "REST API to verify OTP Code"
+    )
+    @PostMapping("/user/verify-otp-code")
+    public ResponseEntity<BaseResponseDto> verifyOtpCode(@RequestBody OtpTokenValidatorDto dto) {
+        BaseResponseDto responseModel = service.verifyOtpCode(dto);
+        return ResponseEntity.status(responseModel.getStatus()).body(responseModel);
+    }
 }

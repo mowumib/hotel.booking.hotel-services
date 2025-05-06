@@ -2,10 +2,10 @@ package com.hotel.booking.user_services.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class HotelRequestException extends RuntimeException{
+public class GlobalRequestException extends RuntimeException{
 	
 	private final HttpStatus httpStatus;
-	public HotelRequestException(String message, HttpStatus httpStatus){
+	public GlobalRequestException(String message, HttpStatus httpStatus){
 		super(message) ;
 		this.httpStatus = httpStatus;
 	}

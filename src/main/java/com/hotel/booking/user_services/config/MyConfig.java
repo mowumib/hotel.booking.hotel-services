@@ -1,4 +1,4 @@
-package com.hotel.booking.user_services.config;
+/* package com.hotel.booking.user_services.config;
 
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -15,3 +15,4 @@ public class MyConfig {
     }
 
 }
+ */

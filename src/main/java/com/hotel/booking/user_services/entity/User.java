@@ -38,6 +38,8 @@ public class User {
     @Column(name= "password", nullable = false)
     private String password;
 
+    @Column(name= "is_validated", nullable = false)
+    private boolean isValidated = false;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role_assignments", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

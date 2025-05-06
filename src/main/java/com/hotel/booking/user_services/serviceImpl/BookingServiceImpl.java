@@ -20,7 +20,7 @@ import com.hotel.booking.user_services.entity.User;
 import com.hotel.booking.user_services.enums.BookingStatus;
 import com.hotel.booking.user_services.enums.PaymentStatus;
 import com.hotel.booking.user_services.enums.Status;
-import com.hotel.booking.user_services.exception.HotelRequestException;
+import com.hotel.booking.user_services.exception.GlobalRequestException;
 import com.hotel.booking.user_services.exception.Message;
 import com.hotel.booking.user_services.repository.BookingRepository;
 import com.hotel.booking.user_services.repository.HotelRepository;
@@ -49,9 +49,9 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseModel bookRoom(String hotelCode, String userCode, BookingDto dto) {
 
-        Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
+        Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
-        User user = userRepository.findByUserCode(userCode).orElseThrow( () -> new HotelRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
+        User user = userRepository.findByUserCode(userCode).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
         // Filter available rooms
         List<Room> rooms = hotel.getRooms();
         List<Room> availableRooms = new ArrayList<>();
@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (availableRooms.isEmpty()) {
-            throw new HotelRequestException("No available rooms in this hotel.", HttpStatus.BAD_REQUEST);
+            throw new GlobalRequestException("No available rooms in this hotel.", HttpStatus.BAD_REQUEST);
         }
 
         Room selectedRoom = availableRooms.get(0);    
@@ -94,10 +94,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseModel cancelBooking(String bookingCode) {
         Booking booking = bookingRepository.findByBookingCode(bookingCode)
-            .orElseThrow(() -> new HotelRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
 
         Room room = roomRepository.findByRoomCode(booking.getRoom().getRoomCode())
-            .orElseThrow(() -> new HotelRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Room"), HttpStatus.NOT_FOUND));
 
         if (room.getStatus().equals(Status.AVAILABLE)) {
             return new ResponseModel(HttpStatus.OK.value(), String.format(Message.ALREADY_AVAILABLE, "Room"));
@@ -116,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseModel getAllBookingsByUserCode(String userCode) {
     User user = userRepository.findByUserCode(userCode).orElseThrow(
-        () -> new HotelRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));;
+        () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));;
     
         List<Booking> bookings = bookingRepository.findByUserCode(user.getUserCode());
     
@@ -127,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseModel getBookingByCode(String bookingCode) {
         Booking booking = bookingRepository.findByBookingCode(bookingCode).orElseThrow(
-            () -> new HotelRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
 
             return new ResponseModel(HttpStatus.OK.value(), 
             String.format(Message.SUCCESS_GET, "Booking"), booking);
