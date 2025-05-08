@@ -1,11 +1,11 @@
 package com.hotel.booking.user_services.serviceImpl;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
+import com.hotel.booking.user_services.dto.otp.OtpValidationResult;
 import com.hotel.booking.user_services.entity.otp.OTP;
 import com.hotel.booking.user_services.repository.OtpRepository;
 import com.hotel.booking.user_services.service.OtpService;
@@ -45,19 +45,47 @@ public class OtpServiceImpl implements OtpService {
         }
     }
 
-    @Override
+    /* @Override
     public boolean validateOtp(String userId, String otpCode) {
-        LocalDateTime thresholdTime = LocalDateTime.now().minus(5, ChronoUnit.MINUTES);
+        // LocalDateTime thresholdTime = LocalDateTime.now().minus(5, ChronoUnit.MINUTES);
+        
+        LocalDateTime now = LocalDateTime.now();
         // Check for expired OTPs and delete them
-       otpRepository.deleteByExpirationTimeBefore(thresholdTime);
+       otpRepository.deleteByExpirationTimeBefore(now);
 
         OTP otp = otpRepository.findByUserIdAndUsedFalse(userId);
-        if (otp != null && otp.getOtpCode().equals(otpCode)) {
+        if (otp != null && otp.getOtpCode().equals(otpCode) && 
+            otp.getExpirationTime().isAfter(now)) {
             otp.setUsed(true);
             otpRepository.save(otp);
             return true;
         }
         return false;
+    } */
+
+    @Override
+    public OtpValidationResult validateOtp(String userId, String otpCode) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // Optional: clean up expired OTPs
+        otpRepository.deleteByExpirationTimeBefore(now);
+
+        OTP otp = otpRepository.findByUserIdAndUsedFalse(userId);
+        if (otp == null) {
+            return new OtpValidationResult(false, "No active OTP found or it has already been used.");
+        }
+
+        if (!otp.getOtpCode().equals(otpCode)) {
+            return new OtpValidationResult(false, "Invalid OTP code.");
+        }
+
+        if (otp.getExpirationTime().isBefore(now)) {
+            return new OtpValidationResult(false, "OTP has expired. Please request a new one.");
+        }
+
+        otp.setUsed(true);
+        otpRepository.save(otp);
+        return new OtpValidationResult(true, "OTP verified successfully.");
     }
 
     @Override

@@ -5,13 +5,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hotel.booking.user_services.dto.BaseResponseDto;
 import com.hotel.booking.user_services.dto.CreateUserDto;
-import com.hotel.booking.user_services.dto.OtpTokenValidatorDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.dto.SignInDto;
+import com.hotel.booking.user_services.dto.otp.OtpTokenValidatorDto;
+import com.hotel.booking.user_services.dto.password.UpdatePasswordDto;
 import com.hotel.booking.user_services.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,6 +71,26 @@ public class OnboardingController {
     @PostMapping("/user/verify-otp-code")
     public ResponseEntity<BaseResponseDto> verifyOtpCode(@RequestBody OtpTokenValidatorDto dto) {
         BaseResponseDto responseModel = service.verifyOtpCode(dto);
+        return ResponseEntity.status(responseModel.getStatus()).body(responseModel);
+    }
+
+    @Operation(
+            summary = "Resend OTP Code REST API",
+            description = "REST API to resend OTP Code"
+    )
+    @PostMapping("/user/resend-otp-code")
+    public ResponseEntity<BaseResponseDto> resendOtpCode(@RequestParam String email) {
+        BaseResponseDto responseModel = service.resendOtpCode(email);
+        return ResponseEntity.status(responseModel.getStatus()).body(responseModel);
+    }
+
+    @Operation(
+            summary = "Resend OTP Code REST API",
+            description = "REST API to resend OTP Code"
+    )
+    @PostMapping("/user/update-password")
+    public ResponseEntity<BaseResponseDto> updatePassword(@RequestBody UpdatePasswordDto dto) {
+        BaseResponseDto responseModel = service.updatePassword(dto);
         return ResponseEntity.status(responseModel.getStatus()).body(responseModel);
     }
 }

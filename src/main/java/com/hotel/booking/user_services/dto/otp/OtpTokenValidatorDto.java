@@ -1,4 +1,4 @@
-package com.hotel.booking.user_services.dto;
+package com.hotel.booking.user_services.dto.otp;
 
 import lombok.Data;
 

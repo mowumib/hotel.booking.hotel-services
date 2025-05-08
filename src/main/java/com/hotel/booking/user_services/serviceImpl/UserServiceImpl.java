@@ -16,10 +16,11 @@ import org.springframework.stereotype.Service;
 
 import com.hotel.booking.user_services.dto.BaseResponseDto;
 import com.hotel.booking.user_services.dto.CreateUserDto;
-import com.hotel.booking.user_services.dto.OtpTokenValidatorDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.dto.SignInDto;
 import com.hotel.booking.user_services.dto.UserInfoResponseDto;
+import com.hotel.booking.user_services.dto.otp.OtpTokenValidatorDto;
+import com.hotel.booking.user_services.dto.otp.OtpValidationResult;
 import com.hotel.booking.user_services.dto.password.UpdatePasswordDto;
 import com.hotel.booking.user_services.email.service.EmailService;
 import com.hotel.booking.user_services.entity.Role;
@@ -58,8 +59,6 @@ public class UserServiceImpl implements UserService{
             if (clientExists.isPresent()) {
                 return new ResponseModel(HttpStatus.CONFLICT.value(),String.format(Message.ALREADY_EXISTS, "User"),null);
             }
-            // .orElseThrow( () -> new GlobalRequestException(String.format(Message.ALREADY_EXISTS, "User"), HttpStatus.CONFLICT));
-
             ModelMapper modelMapper = new ModelMapper();
             User newClient = modelMapper.map(dto, User.class);
             newClient.setUserCode("CLIENT-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8));
@@ -183,9 +182,9 @@ public class UserServiceImpl implements UserService{
     public BaseResponseDto verifyOtpCode(OtpTokenValidatorDto dto) {
         try {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
-            boolean isValid = otpService.validateOtp(user.getId(), dto.getOtpCode());
-
-            if(isValid){
+            OtpValidationResult result = otpService.validateOtp(user.getId(), dto.getOtpCode());
+          
+            if(result.isSuccess()){
                 user.setValidated(true);
                 userRepository.save(user);
 
@@ -199,7 +198,7 @@ public class UserServiceImpl implements UserService{
                 return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), null);
             }
 
-            return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.FAILED_VALIDATE, "User"), null);
+            return new BaseResponseDto(HttpStatus.BAD_REQUEST, result.getMessage(), null);
         } catch(GlobalRequestException e) {
             return new BaseResponseDto(HttpStatus.BAD_REQUEST, e.getMessage(), null);
         
@@ -212,16 +211,20 @@ public class UserServiceImpl implements UserService{
     @Override
     public BaseResponseDto resendOtpCode(String email) {
         try {
-            User user = userRepository.findByEmail(email).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND)); 
+            Optional<User> user = userRepository.findByEmail(email); 
 
+            if(user.isEmpty()) {
+                return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.NOT_FOUND, "User"), null);
+            }
+            User userObj = user.get();
             String OTPToken = otpService.generateOtp();
-            otpService.saveOtp(user.getId(), OTPToken);
+            otpService.saveOtp(userObj.getId(), OTPToken);
 
             String subject = "Your OTP Code";
-            String body = String.format("Hello %s,\n\nYour OTP code is: %s\n\nThanks,\nTeam", user.getName(), OTPToken);
+            String body = String.format("Hello %s,\n\nYour OTP code is: %s\n\nThanks,\nTeam", userObj.getName(), OTPToken);
 
             // Send email via RabbitMQ
-            emailService.sendEmailAsync(user.getEmail(), subject, body);
+            emailService.sendEmailAsync(userObj.getEmail(), subject, body);
 
             return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), null);
         } catch(GlobalRequestException e) {
@@ -237,15 +240,19 @@ public class UserServiceImpl implements UserService{
     @Override
     public BaseResponseDto updatePassword(UpdatePasswordDto dto) {
         try {
-            User user = userRepository.findByEmail(dto.getUserCode()).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
+            Optional<User> user = userRepository.findByEmail(dto.getUserCode());
+            if(user.isEmpty()) {
+                return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.NOT_FOUND, "User"), null);
+            }
+            User userObj = user.get();
             String oldPassword = dto.getOldPassword();
             String newPassword = dto.getNewPassword();
 
-            if (!encoder.matches(oldPassword, user.getPassword())) {
+            if (!encoder.matches(oldPassword, userObj.getPassword())) {
                 return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.INVALID_PASSWORD, "Password"), null);
             }
-            user.setPassword(encoder.encode(newPassword));
-            userRepository.save(user);
+            userObj.setPassword(encoder.encode(newPassword));
+            userRepository.save(userObj);
             return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_UPDATE, "Password"), null);
         } catch(GlobalRequestException e) {
             return new BaseResponseDto(HttpStatus.BAD_REQUEST, e.getMessage(), null);

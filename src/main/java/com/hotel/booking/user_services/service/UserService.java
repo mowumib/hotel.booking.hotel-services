@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hotel.booking.user_services.dto.BaseResponseDto;
 import com.hotel.booking.user_services.dto.CreateUserDto;
-import com.hotel.booking.user_services.dto.OtpTokenValidatorDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.dto.SignInDto;
+import com.hotel.booking.user_services.dto.otp.OtpTokenValidatorDto;
 import com.hotel.booking.user_services.dto.password.UpdatePasswordDto;
 
 
