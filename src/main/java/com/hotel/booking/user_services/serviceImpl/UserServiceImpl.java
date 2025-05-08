@@ -20,6 +20,7 @@ import com.hotel.booking.user_services.dto.OtpTokenValidatorDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 import com.hotel.booking.user_services.dto.SignInDto;
 import com.hotel.booking.user_services.dto.UserInfoResponseDto;
+import com.hotel.booking.user_services.dto.password.UpdatePasswordDto;
 import com.hotel.booking.user_services.email.service.EmailService;
 import com.hotel.booking.user_services.entity.Role;
 import com.hotel.booking.user_services.entity.User;
@@ -153,44 +154,106 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public BaseResponseDto signIn(SignInDto dto) {
-        Authentication authentication = authenticationManager
+        try {
+            Authentication authentication = authenticationManager
             .authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(),
                 dto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        CustomUserDetailImpl userDetails = (CustomUserDetailImpl) authentication.getPrincipal();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            CustomUserDetailImpl userDetails = (CustomUserDetailImpl) authentication.getPrincipal();
 
-        String jwt = jwtUtils.generateTokenFromEmail(userDetails.getEmail());
+            String jwt = jwtUtils.generateTokenFromEmail(userDetails.getEmail());
 
-        Optional<User> user = userRepository.findByEmail(userDetails.getEmail());
+            Optional<User> user = userRepository.findByEmail(userDetails.getEmail());
 
-        UserInfoResponseDto userInfo = new UserInfoResponseDto(jwt, user.get());
+            UserInfoResponseDto userInfo = new UserInfoResponseDto(jwt, user.get());
 
-        return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), userInfo);
+            return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), userInfo);
+        } catch(GlobalRequestException e) {
+            return new BaseResponseDto(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+        
+        } catch (Exception e) {
+            log.error("Unexpected error signing in: {}", e.getMessage(), e);
+            return new BaseResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error signing in", e.getMessage());
+        }
+        
     }
 
     @Override
     public BaseResponseDto verifyOtpCode(OtpTokenValidatorDto dto) {
-        User user = userRepository.findByEmail(dto.getEmail()).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
-        boolean isValid = otpService.validateOtp(user.getId(), dto.getOtpCode());
+        try {
+            User user = userRepository.findByEmail(dto.getEmail()).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
+            boolean isValid = otpService.validateOtp(user.getId(), dto.getOtpCode());
 
-        if(isValid){
-            user.setValidated(true);
-            userRepository.save(user);
+            if(isValid){
+                user.setValidated(true);
+                userRepository.save(user);
 
-            String subject = "Your Account has been verified";
-            String body = String.format("Hello %s,\n\nYour Account has been verified.\n\nThanks,\nTeam", user.getName());
+                String subject = "Your Account has been verified";
+                String body = String.format("Hello %s,\n\nYour Account has been verified.\n\nThanks,\nTeam", user.getName());
+
+                // Send email via RabbitMQ
+                emailService.sendEmailAsync(user.getEmail(), subject, body);
+
+
+                return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), null);
+            }
+
+            return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.FAILED_VALIDATE, "User"), null);
+        } catch(GlobalRequestException e) {
+            return new BaseResponseDto(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+        
+        } catch (Exception e) {
+            log.error("Unexpected error signing in: {}", e.getMessage(), e);
+            return new BaseResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error verifying otp code", e.getMessage());
+        }
+    }
+
+    @Override
+    public BaseResponseDto resendOtpCode(String email) {
+        try {
+            User user = userRepository.findByEmail(email).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND)); 
+
+            String OTPToken = otpService.generateOtp();
+            otpService.saveOtp(user.getId(), OTPToken);
+
+            String subject = "Your OTP Code";
+            String body = String.format("Hello %s,\n\nYour OTP code is: %s\n\nThanks,\nTeam", user.getName(), OTPToken);
 
             // Send email via RabbitMQ
             emailService.sendEmailAsync(user.getEmail(), subject, body);
 
-
             return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), null);
+        } catch(GlobalRequestException e) {
+            return new BaseResponseDto(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+        
+        } catch (Exception e) {
+            log.error("Unexpected error signing in: {}", e.getMessage(), e);
+            return new BaseResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error verifying otp code", e.getMessage());
         }
-
-        return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.FAILED_VALIDATE, "User"), null);
-
+        
     }
 
+    @Override
+    public BaseResponseDto updatePassword(UpdatePasswordDto dto) {
+        try {
+            User user = userRepository.findByEmail(dto.getUserCode()).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
+            String oldPassword = dto.getOldPassword();
+            String newPassword = dto.getNewPassword();
+
+            if (!encoder.matches(oldPassword, user.getPassword())) {
+                return new BaseResponseDto(HttpStatus.BAD_REQUEST, String.format(Message.INVALID_PASSWORD, "Password"), null);
+            }
+            user.setPassword(encoder.encode(newPassword));
+            userRepository.save(user);
+            return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_UPDATE, "Password"), null);
+        } catch(GlobalRequestException e) {
+            return new BaseResponseDto(HttpStatus.BAD_REQUEST, e.getMessage(), null);
+    
+        } catch (Exception e) {
+            log.error("Unexpected error updating password: {}", e.getMessage(), e);
+            return new BaseResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error updating password", e.getMessage());
+        }
+    }
     
 }
