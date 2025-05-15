@@ -44,7 +44,7 @@ public class Booking extends BaseEntity {
     private LocalDate checkOutDate;
 
     @Column(name = "amount")
-    private Integer amount;
+    private int amount;
 
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;

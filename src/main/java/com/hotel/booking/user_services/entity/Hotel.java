@@ -20,7 +20,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity@EqualsAndHashCode(callSuper = true)
+@Entity
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "hotels")
 public class Hotel extends BaseEntity{
 

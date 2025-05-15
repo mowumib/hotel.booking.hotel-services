@@ -40,6 +40,7 @@ public final class Message {
     public static final String SUCCESS_CANCELLED = "%s cancelled successfully";
     public static final String ALREADY_AVAILABLE = "%s already available";
     public static final String SUCCESS_BOOKED = "%s booked successfully";
+    public static final String BOOKING_COMPLETED = "%s completed successfully";
     
     private Message() {
         throw new AssertionError("Cannot instantiate Message");

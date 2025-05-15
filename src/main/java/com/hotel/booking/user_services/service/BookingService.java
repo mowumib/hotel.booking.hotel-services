@@ -4,8 +4,6 @@ import com.hotel.booking.user_services.dto.BookingDto;
 import com.hotel.booking.user_services.dto.ResponseModel;
 
 public interface BookingService {
-    // public ResponseModel bookRoom(String userCode, String hotelCode);
-
     public ResponseModel bookRoom(String hotelCode, String userCode, BookingDto dto);
 
     public ResponseModel cancelBooking(String bookingCode);
@@ -19,7 +17,5 @@ public interface BookingService {
     public ResponseModel completeBooking(String bookingCode);
 
     public ResponseModel getAllBooking();
-
-    // public Booking completeBooking(String bookingCode);
 
 }

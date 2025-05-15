@@ -22,6 +22,8 @@ import com.hotel.booking.user_services.enums.PaymentStatus;
 import com.hotel.booking.user_services.enums.Status;
 import com.hotel.booking.user_services.exception.GlobalRequestException;
 import com.hotel.booking.user_services.exception.Message;
+import com.hotel.booking.user_services.paystack.dto.PaystackPaymentDto;
+import com.hotel.booking.user_services.paystack.service.PaystackService;
 import com.hotel.booking.user_services.repository.BookingRepository;
 import com.hotel.booking.user_services.repository.HotelRepository;
 import com.hotel.booking.user_services.repository.RoomRepository;
@@ -42,10 +44,11 @@ public class BookingServiceImpl implements BookingService {
 
     private final RoomRepository roomRepository;
 
-     private final HotelRepository hotelRepository;
+    private final HotelRepository hotelRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
+    private final PaystackService paystackService;
     @Override
     public ResponseModel bookRoom(String hotelCode, String userCode, BookingDto dto) {
 
@@ -155,7 +158,34 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseModel completeBooking(String bookingCode) {
-        throw new UnsupportedOperationException("Unimplemented method 'completeBooking'");
+        Booking booking = bookingRepository.findByBookingCode(bookingCode).orElseThrow(
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Booking"), HttpStatus.NOT_FOUND));
+
+        String userCode = booking.getUser().getUserCode();
+
+        User user = userRepository.findByUserCode(userCode).orElseThrow(
+            () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
+
+        PaystackPaymentDto paystackPaymentDto = new PaystackPaymentDto();
+        paystackPaymentDto.setAmount(booking.getAmount());
+        paystackPaymentDto.setEmail(user.getEmail());
+        paystackPaymentDto.setBookingCode(booking.getBookingCode());
+        paystackPaymentDto.setUserCode(user.getUserCode());
+        
+
+        ResponseModel response = paystackService.initializeTransaction(paystackPaymentDto);
+
+        if (response.getStatusCode() >= 500) {
+            return new ResponseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getMessage(), null);
+        } else if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {
+            return new ResponseModel(HttpStatus.BAD_REQUEST.value(), response.getMessage(), response.getData());
+        }
+
+        // PaystackPaymentResponse paystackPaymentResponse = (PaystackPaymentResponse) response.getData();
+        // booking.setPaymentReference(paystackPaymentResponse.getData().getReference());
+        // booking.setPaymentStatus(PaymentStatus.PAID);
+        // bookingRepository.save(booking);
+        return new ResponseModel(HttpStatus.OK.value(), response.getMessage(), response.getData());
     }
 
 }

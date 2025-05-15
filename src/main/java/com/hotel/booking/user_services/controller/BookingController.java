@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,6 +97,17 @@ public class BookingController {
     @GetMapping("/get-all-bookings-by-hotel-code")
     public ResponseEntity<ResponseModel> getAllBookingsByHotelCode(@RequestParam String hotelCode){
         ResponseModel responseModel = bookingService.getAllBookingsByHotelCode(hotelCode);
+        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
+    @Operation(
+        summary = "Complete booking",
+        description = "REST API for complete"
+    )
+    @PostMapping("/complete-booking")
+    public ResponseEntity<ResponseModel> completeBooking(@RequestParam String bookingCode){
+        ResponseModel responseModel = bookingService.completeBooking(bookingCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
 }

@@ -29,3 +29,8 @@ rabbitmq:
   email:
     queue: email.queue
 
+paystack:
+  base-url: https://api.paystack.co
+  secret-key: ${PAYSTACK_SECRET}
+
+
