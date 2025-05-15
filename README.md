@@ -1,4 +1,4 @@
-# Hotel Booking - User Services
+# Hotel Booking - Hotel Services
 
 This repository contains the **User Service** component of the Hotel Booking system, responsible for user registration, authentication, hotel creation, hotel booking, and email verification via OTP.
 
@@ -19,7 +19,7 @@ This repository contains the **User Service** component of the Hotel Booking sys
 - **Paystack Integration**  
   Uses Paystack to handle payments for hotel bookings.
 
-  ## 🛠 Tech Stack
+## 🛠 Tech Stack
 
 - Java 21  
 - Spring Boot  
