@@ -2,6 +2,7 @@ package com.hotel.booking.hotel_services.entity;
 
 import java.util.List;
 
+import com.hotel.booking.hotel_services.enums.RoomType;
 import com.hotel.booking.hotel_services.enums.Status;
 import com.hotel.booking.hotel_services.utils.BaseEntity;
 
@@ -26,7 +27,7 @@ public class Room extends BaseEntity{
     private String roomCode;
 
     @Column(name = "room_type", nullable = false)   
-    private String roomType;
+    private RoomType roomType;
 
     @Column(name = "room_number", nullable = false)
     private String roomNumber;

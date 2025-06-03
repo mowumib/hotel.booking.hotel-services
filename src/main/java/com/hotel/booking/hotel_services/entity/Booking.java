@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotel.booking.hotel_services.enums.BookingStatus;
 import com.hotel.booking.hotel_services.enums.PaymentStatus;
+import com.hotel.booking.hotel_services.enums.RoomType;
 import com.hotel.booking.hotel_services.utils.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -37,8 +38,8 @@ public class Booking extends BaseEntity {
     @JoinColumn(name = "room_code", referencedColumnName = "room_code")
     private Room room;
 
-    @Column(name = "booking_date")
-    private LocalDate bookingDate;
+    @Column(name = "check_in_date")
+    private LocalDate checkInDate;
 
     @Column(name = "check_out_date")
     private LocalDate checkOutDate;
@@ -56,6 +57,9 @@ public class Booking extends BaseEntity {
     @JsonIgnore
     @JoinColumn(name = "hotel_code", referencedColumnName = "hotel_code", insertable = false, updatable = false)
     private Hotel hotel;
+
+    @Column(name = "room_type", nullable = false)   
+    private RoomType roomType;
 
     @ManyToOne
     @JsonIgnore

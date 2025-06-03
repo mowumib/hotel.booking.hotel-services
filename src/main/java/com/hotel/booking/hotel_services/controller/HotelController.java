@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hotel.booking.hotel_services.dto.HotelDto;
 import com.hotel.booking.hotel_services.dto.ResponseModel;
-import com.hotel.booking.hotel_services.dto.RoomDto;
 import com.hotel.booking.hotel_services.service.HotelService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +48,7 @@ public class HotelController {
         summary = "Get hotel by code",
         description = "REST API for getting a hotel"
     )
-    @GetMapping("/get-hotel-by-code")
+    @GetMapping("/hotel-by-code")
     public ResponseEntity<ResponseModel> getHotelByHotelCode(@RequestParam String hotelCode) {
         ResponseModel responseModel = hotelService.getHotelByHotelCode(hotelCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
@@ -60,7 +59,7 @@ public class HotelController {
         summary = "Get all hotels",
         description = "REST API for getting all hotels"
     )
-    @GetMapping("/get-all-hotels")
+    @GetMapping("/all-hotels")
     public ResponseEntity<ResponseModel> getAllHotels() {
         return ResponseEntity.ok(hotelService.getAllHotels());
     }
@@ -70,75 +69,9 @@ public class HotelController {
         summary = "Delete hotel by code",
         description = "REST API for deleting a hotel"
     )
-    @DeleteMapping("/delete-hotel-by-hotel-code")
+    @DeleteMapping("/delete")
     public ResponseEntity<ResponseModel> deleteHotelByHotelCode(@RequestParam String hotelCode) {
         ResponseModel responseModel = hotelService.deleteHotelByHotelCode(hotelCode);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Add room by hotel code",
-        description = "REST API for adding a room"
-    )
-    @PostMapping("/room/add-room")
-    public ResponseEntity<ResponseModel> addRoom(@RequestParam String hotelCode, @Valid @RequestBody RoomDto dto) {
-        ResponseModel responseModel = hotelService.addRoom(hotelCode, dto);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CLIENT')")
-    @Operation(
-        summary = "Get room by code",
-        description = "REST API for getting a room"
-    )
-    @GetMapping("/room/get-room")
-    public ResponseEntity<ResponseModel> getRoomByRoomCode(@RequestParam String roomCode) {
-        ResponseModel responseModel = hotelService.getRoomByRoomCode(roomCode);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Get all available rooms by hotel code",
-        description = "REST API for getting all available rooms"
-    )
-    @GetMapping("/room/get-all-available-rooms")
-    public ResponseEntity<ResponseModel> getAllAvailableRoom(@RequestParam String hotelCode) {
-        ResponseModel responseModel = hotelService.getAllAvailableRoom(hotelCode);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Get all booked rooms by hotel code",
-        description = "REST API for getting all booked room"
-    )
-    @GetMapping("/room/get-all-booked-rooms")
-    public ResponseEntity<ResponseModel> getAllBookedRoom(@RequestParam String hotelCode) {
-        ResponseModel responseModel = hotelService.getAllBookedRoom(hotelCode);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Get all rooms",
-        description = "REST API for getting all rooms"
-    )
-    @GetMapping("/room/get-all-rooms by hotel code")
-    public ResponseEntity<ResponseModel> getAllRooms(@RequestParam String hotelCode) {
-        ResponseModel responseModel = hotelService.getAllRooms(hotelCode);
-        return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(
-        summary = "Delete room by room code",
-        description = "REST API for deleting room"
-    )
-    @DeleteMapping("/room/delete-room")
-    public ResponseEntity<ResponseModel> deleteRoomByRoomCode(@RequestParam String roomCode) {
-        ResponseModel responseModel = hotelService.deleteRoomByRoomCode(roomCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
     }
 
@@ -147,7 +80,7 @@ public class HotelController {
         summary = "Get hotel by location",
         description = "REST API for getting all hotels by location"
     )
-    @GetMapping("/get-hotel-by-location")
+    @GetMapping("/hotel-by-location")
     public ResponseEntity<ResponseModel> getHotelByLocation(@RequestParam String location) {
         ResponseModel responseModel = hotelService.getHotelByLocation(location);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
@@ -158,7 +91,7 @@ public class HotelController {
         summary = "Get hotel by name",
         description = "REST API for getting hotel by name"
     )
-    @GetMapping("/get-hotel-by-name")
+    @GetMapping("/hotel-by-name")
     public ResponseEntity<ResponseModel> getHotelByName(@RequestParam String name) {
         ResponseModel responseModel = hotelService.getHotelByName(name);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);

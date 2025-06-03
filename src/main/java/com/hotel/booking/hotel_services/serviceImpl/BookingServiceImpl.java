@@ -19,6 +19,7 @@ import com.hotel.booking.hotel_services.entity.Room;
 import com.hotel.booking.hotel_services.entity.User;
 import com.hotel.booking.hotel_services.enums.BookingStatus;
 import com.hotel.booking.hotel_services.enums.PaymentStatus;
+import com.hotel.booking.hotel_services.enums.RoomType;
 import com.hotel.booking.hotel_services.enums.Status;
 import com.hotel.booking.hotel_services.exception.GlobalRequestException;
 import com.hotel.booking.hotel_services.exception.Message;
@@ -49,20 +50,24 @@ public class BookingServiceImpl implements BookingService {
     private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     private final PaystackService paystackService;
+    
     @Override
     public ResponseModel bookRoom(String hotelCode, String userCode, BookingDto dto) {
 
         Hotel hotel = hotelRepository.findByHotelCode(hotelCode).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "Hotel"), HttpStatus.NOT_FOUND));
 
         User user = userRepository.findByUserCode(userCode).orElseThrow( () -> new GlobalRequestException(String.format(Message.NOT_FOUND, "User"), HttpStatus.NOT_FOUND));
+        
         // Filter available rooms
+        RoomType requestedRoomType = dto.getRoomType();
         List<Room> rooms = hotel.getRooms();
+        
         List<Room> availableRooms = new ArrayList<>();
         for(Room room: rooms) {
             if(room == null) {
                 continue;
             }
-            if(room.getStatus().equals(Status.AVAILABLE)) {
+            if(room.getStatus().equals(Status.AVAILABLE) && room.getRoomType() == requestedRoomType) {
                 availableRooms.add(room);
             }
         }
@@ -80,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setBookingCode("BOOKING-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8));
         booking.setAmount(selectedRoom.getRoomPrice());
         booking.setPaymentStatus(PaymentStatus.UNPAID);
-        booking.setBookingDate(LocalDate.now());
+        booking.setCheckInDate(LocalDate.now());
         booking.setCheckOutDate(LocalDate.now().plusDays(1));
         booking.setBookingStatus(BookingStatus.BOOKED);
         booking.setUserCode(userCode);

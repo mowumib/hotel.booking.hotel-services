@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/hotel/bookings")
+@RequestMapping("/bookings")
 @Tag(name = "Booking Controller REST API IN USER SERVICE", description = "Booking APIs")
 public class BookingController {
 
@@ -48,7 +48,7 @@ public class BookingController {
         summary = "Get booking by booking code",
         description = "REST API for getting booking by code"
     )
-    @GetMapping("/get-booking")
+    @GetMapping("/booking")
     public ResponseEntity<ResponseModel> getBookingByCode(@RequestParam String bookingCode){
         ResponseModel responseModel = bookingService.getBookingByCode(bookingCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
@@ -60,7 +60,7 @@ public class BookingController {
             summary = "Get all booking",
             description = "REST API for getting all booking"
     )
-    @GetMapping("/get-all-booking")
+    @GetMapping("/all-bookings")
     public ResponseEntity<ResponseModel> getAllBooking() {
         ResponseModel responseModel = bookingService.getAllBooking();
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
@@ -82,7 +82,7 @@ public class BookingController {
         summary = "Get all bookings by user code",
         description = "REST API for getting all bookings"
     )
-    @GetMapping("/get-all-bookings-by-user-code")
+    @GetMapping("/all-bookings-by-user-code")
     public ResponseEntity<ResponseModel> getAllBookingsByUserCode(@RequestParam String userCode){
         ResponseModel responseModel = bookingService.getAllBookingsByUserCode(userCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
@@ -93,7 +93,7 @@ public class BookingController {
         summary = "Get all bookings by hotel code",
         description = "REST API for getting all bookings by hotel code"
     )
-    @GetMapping("/get-all-bookings-by-hotel-code")
+    @GetMapping("/all-bookings-by-hotel-code")
     public ResponseEntity<ResponseModel> getAllBookingsByHotelCode(@RequestParam String hotelCode){
         ResponseModel responseModel = bookingService.getAllBookingsByHotelCode(hotelCode);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);

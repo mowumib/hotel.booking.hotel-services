@@ -33,8 +33,8 @@ public class OnboardingController {
 
 
     @Operation(
-            summary = "Client User Onboarding REST API",
-            description = "REST API for client users to signup"
+        summary = "Client User Onboarding REST API",
+        description = "REST API for client users to signup"
     )
     @PostMapping("/user/signup")
     public ResponseEntity<ResponseModel> createClientUser(@Valid @RequestBody CreateUserDto dto) {
@@ -43,19 +43,19 @@ public class OnboardingController {
     }
     
 
-    @Operation(
-            summary = "Admin User Onboarding REST API",
-            description = "REST API for admin users to signup"
+    /* @Operation(
+        summary = "Admin User Onboarding REST API",
+        description = "REST API for admin users to signup"
     )
     @PostMapping("/admin-user/signup")
     public ResponseEntity<ResponseModel> createAdminUser(@Valid @RequestBody CreateUserDto dto) {
         ResponseModel responseModel = service.createAdminUser(dto);
         return ResponseEntity.status(responseModel.getStatusCode()).body(responseModel);
-    }
+    } */
 
     @Operation(
-            summary = "User Signin REST API",
-            description = "REST API for users to signin"
+        summary = "User Signin REST API",
+        description = "REST API for users to signin"
     )
     @PostMapping("/user/signin")
     public ResponseEntity<BaseResponseDto> signIn(@Valid @RequestBody SignInDto dto) {
@@ -65,8 +65,8 @@ public class OnboardingController {
 
 
     @Operation(
-            summary = "Verify OTP Code REST API",
-            description = "REST API to verify OTP Code"
+        summary = "Verify OTP Code REST API",
+        description = "REST API to verify OTP Code"
     )
     @PostMapping("/user/verify-otp-code")
     public ResponseEntity<BaseResponseDto> verifyOtpCode(@RequestBody OtpTokenValidatorDto dto) {
@@ -75,8 +75,8 @@ public class OnboardingController {
     }
 
     @Operation(
-            summary = "Resend OTP Code REST API",
-            description = "REST API to resend OTP Code"
+        summary = "Resend OTP Code REST API",
+        description = "REST API to resend OTP Code"
     )
     @PostMapping("/user/resend-otp-code")
     public ResponseEntity<BaseResponseDto> resendOtpCode(@RequestParam String email) {
@@ -85,8 +85,8 @@ public class OnboardingController {
     }
 
     @Operation(
-            summary = "Resend OTP Code REST API",
-            description = "REST API to resend OTP Code"
+        summary = "Resend OTP Code REST API",
+        description = "REST API to resend OTP Code"
     )
     @PostMapping("/user/update-password")
     public ResponseEntity<BaseResponseDto> updatePassword(@RequestBody UpdatePasswordDto dto) {

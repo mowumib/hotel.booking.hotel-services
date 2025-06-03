@@ -1,10 +1,11 @@
-package com.hotel.booking.hotel_services.roleseeder;
+package com.hotel.booking.hotel_services.seeder;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import com.hotel.booking.hotel_services.enums.RoleEnum;
 import com.hotel.booking.hotel_services.repository.RoleRepository;
 
 @Component
+@Order(1)
 public class RoleSeeder implements ApplicationListener<ContextRefreshedEvent> {
     private final RoleRepository roleRepository;
 

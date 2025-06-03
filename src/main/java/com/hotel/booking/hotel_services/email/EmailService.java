@@ -1,6 +1,5 @@
 package com.hotel.booking.hotel_services.email;
 
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,15 +11,15 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class EmailConsumer {
+public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
     private String from;
 
-    @RabbitListener(queues = "${rabbitmq.email.queue}")
-    public void handleEmailMessage(EmailMessageDto emailMessage) {
+    // @RabbitListener(queues = "${rabbitmq.email.queue}")
+    public void sendEmail(EmailMessageDto emailMessage) {
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(from);

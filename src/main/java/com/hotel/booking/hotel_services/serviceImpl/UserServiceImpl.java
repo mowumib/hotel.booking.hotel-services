@@ -22,7 +22,8 @@ import com.hotel.booking.hotel_services.dto.UserInfoResponseDto;
 import com.hotel.booking.hotel_services.dto.otp.OtpTokenValidatorDto;
 import com.hotel.booking.hotel_services.dto.otp.OtpValidationResult;
 import com.hotel.booking.hotel_services.dto.password.UpdatePasswordDto;
-import com.hotel.booking.hotel_services.email.service.EmailService;
+import com.hotel.booking.hotel_services.email.EmailService;
+import com.hotel.booking.hotel_services.email.dto.EmailMessageDto;
 import com.hotel.booking.hotel_services.entity.Role;
 import com.hotel.booking.hotel_services.entity.User;
 import com.hotel.booking.hotel_services.exception.GlobalRequestException;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService{
             }
             ModelMapper modelMapper = new ModelMapper();
             User newClient = modelMapper.map(dto, User.class);
-            newClient.setUserCode("CLIENT-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8));
+            newClient.setUserCode("USER-" + UUID.randomUUID().toString().replace("-", "").substring(0, 8));
             newClient.setEmail(dto.getEmail());
             newClient.setName(dto.getName());
             newClient.setPassword(encoder.encode(dto.getPassword()));
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService{
             String body = String.format("Hello %s,\n\nYour OTP code is: %s\n\nThanks,\nTeam", dto.getName(), OTPToken);
 
             // Send email via RabbitMQ
-            emailService.sendEmailAsync(newClient.getEmail(), subject, body);
+            emailService.sendEmail(new EmailMessageDto(newClient.getEmail(), subject, body));
 
             return new ResponseModel(HttpStatus.CREATED.value(), String.format(Message.SUCCESS_CREATE, "User"), newClient);
             // modelMapper.getConfiguration().setSkipNullEnabled(true);
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    @Override
+    /* @Override
     public ResponseModel createAdminUser(CreateUserDto dto) {
         try {
             Optional<User> adminExists = userRepository.findByEmail(dto.getEmail());
@@ -150,7 +151,7 @@ public class UserServiceImpl implements UserService{
             return new ResponseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error creating User", e.getMessage());
         }
     }
-
+ */
     @Override
     public BaseResponseDto signIn(SignInDto dto) {
         try {
@@ -191,9 +192,7 @@ public class UserServiceImpl implements UserService{
                 String subject = "Your Account has been verified";
                 String body = String.format("Hello %s,\n\nYour Account has been verified.\n\nThanks,\nTeam", user.getName());
 
-                // Send email via RabbitMQ
-                emailService.sendEmailAsync(user.getEmail(), subject, body);
-
+                emailService.sendEmail(new EmailMessageDto(user.getEmail(), subject, body));
 
                 return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), null);
             }
@@ -223,8 +222,7 @@ public class UserServiceImpl implements UserService{
             String subject = "Your OTP Code";
             String body = String.format("Hello %s,\n\nYour OTP code is: %s\n\nThanks,\nTeam", userObj.getName(), OTPToken);
 
-            // Send email via RabbitMQ
-            emailService.sendEmailAsync(userObj.getEmail(), subject, body);
+            emailService.sendEmail(new EmailMessageDto(userObj.getEmail(), subject, body));
 
             return new BaseResponseDto(HttpStatus.OK, String.format(Message.SUCCESS_VALIDATE, "User"), null);
         } catch(GlobalRequestException e) {

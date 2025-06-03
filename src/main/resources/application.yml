@@ -25,9 +25,9 @@ logging:
       springframework:
         security: DEBUG
 
-rabbitmq:
-  email:
-    queue: email.queue
+# rabbitmq:
+#   email:
+#     queue: email.queue
 
 paystack:
   base-url: https://api.paystack.co

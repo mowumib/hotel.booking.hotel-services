@@ -14,7 +14,7 @@ import com.hotel.booking.hotel_services.dto.password.UpdatePasswordDto;
 public interface UserService {
     public ResponseModel createClientUser(@RequestBody CreateUserDto dto);
 
-    public ResponseModel createAdminUser(@RequestBody CreateUserDto dto);
+    // public ResponseModel createAdminUser(@RequestBody CreateUserDto dto);
 
     public BaseResponseDto signIn(@RequestBody SignInDto dto);
 
